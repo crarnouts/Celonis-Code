@@ -1,0 +1,33 @@
+-- This is PQL code from Celonis
+
+AVG (
+  CASE
+    WHEN
+    "_CEL_LDTruck_ACTIVITIES"."case_activity_num" =1
+    THEN
+      (
+        REMAP_TIMESTAMPS (
+          PU_MAX (
+            "CASES_LnD_Truck" ,
+            "_CEL_LDTruck_ACTIVITIES"."EVENTTIME" --,
+            -- "_CEL_LDTruck_ACTIVITIES"."ACTIVITY_EN" = 'Invoice Posted'
+          ) ,
+          SECONDS
+        )
+        -
+        REMAP_TIMESTAMPS (
+          PU_MIN (
+            "CASES_LnD_Truck" ,
+            "_CEL_LDTruck_ACTIVITIES"."EVENTTIME" ,
+            "_CEL_LDTruck_ACTIVITIES"."ACTIVITY_EN" = 'Create OTR'
+          ) ,
+          SECONDS
+        )
+      )
+      /
+      86400
+    ELSE
+      NULL
+  END
+)
+
